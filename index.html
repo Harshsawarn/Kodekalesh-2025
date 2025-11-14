@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyayasetu - Bridge to Justice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .tab-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.02);
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+        
+        .result h3:first-child {
+            margin-top: 0;
+        }
+        
+        .ai-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin: 15px 0;
+        }
+        
+        .ai-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .ai-box p {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .result-item.lost {
+            border-left-color: #dc3545;
+        }
+        
+        .success-rate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .success-rate h4 {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .success-rate p {
+            margin: 5px 0;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Nyayasetu</h1>
+            <p>Bridge to Justice - Synthesize Legal Complexity, Restore Judicial Access</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('citizen')">👤 For Citizens</button>
+            <button class="tab-btn" onclick="switchTab('judge')">⚖️ For Judges</button>
+        </div>
+        
+        <!-- CITIZEN TAB -->
+        <div id="citizen" class="tab-content active">
+            <div class="card">
+                <h2>👤 Citizen Portal - Understand Your Rights</h2>
+                <p style="color: #666; margin-bottom: 20px;">Enter your legal issue and get instant guidance with AI-powered explanations and case references.</p>
+                
+                <div class="form-group">
+                    <label>What is your legal problem?</label>
+                    <select id="citizenCategory" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="Domestic">Dowry/Domestic Harassment</option>
+                        <option value="Property">Land/Property Dispute</option>
+                        <option value="Criminal">Fraud/Cheating/Criminal</option>
+                        <option value="Employment">Workplace Harassment</option>
+                        <option value="Family">Family Law Issues</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Describe your situation (briefly)</label>
+                    <textarea id="citizenProblem" placeholder="Tell us what happened... (e.g., My mother-in-law is demanding dowry)"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Location</label>
+                    <select id="citizenLocation" required>
+                        <option value="">-- Select State --</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="West Bengal">West Bengal</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <button onclick="handleCitizenQuery()">🔍 Find Similar Cases & Get Advice</button>
+                
+                <div class="loader" id="citizenLoader">
+                    <div class="spinner"></div>
+                    <p>Processing your query with AI...</p>
+                </div>
+                
+                <div class="result" id="citizenResult"></div>
+            </div>
+        </div>
+        
+        <!-- JUDGE TAB -->
+        <div id="judge" class="tab-content">
+            <div class="card">
+                <h2>⚖️ Judge Portal - Case Organization & Precedents</h2>
+                <p style="color: #666; margin-bottom: 20px;">Organize complex cases instantly with AI analysis and find relevant precedents.</p>
+                
+                <div class="form-group">
+                    <label>Case Title</label>
+                    <input type="text" id="judgeCase" placeholder="e.g., Land Acquisition Dispute vs State of Bihar" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Legal Issues/Summary</label>
+                    <textarea id="judgeIssues" placeholder="What is this case about? Describe the key legal questions..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Documents Available</label>
+                    <textarea id="judgeDocuments" placeholder="List documents submitted: Petition, Affidavits, Evidence, etc."></textarea>
+                </div>
+                
+                <button onclick="handleJudgeQuery()">📋 Organize Case & Find Precedents</button>
+                
+                <div class="loader" id="judgeLoader">
+                    <div class="spinner"></div>
+                    <p>Analyzing case with AI...</p>
+                </div>
+                
+                <div class="result" id="judgeResult"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            document.getElementById('citizen').classList.remove('active');
+            document.getElementById('judge').classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function handleCitizenQuery() {
+            const category = document.getElementById('citizenCategory').value;
+            const problem = document.getElementById('citizenProblem').value;
+            const location = document.getElementById('citizenLocation').value;
+            
+            if (!category || !problem || !location) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            showCitizenLoader();
+            
+            google.script.run
+                .withSuccessHandler(displayCitizenResult)
+                .withFailureHandler(showError)
+                .generateCitizenResponse(problem, category, location);
+        }
+        
+        function displayCitizenResult(data) {
+            hideCitizenLoader();
+            
+            const successRate = data.successRate || {won: 0, total: 1, percentage: 0};
+            const percentage = successRate.percentage || 0;
+            const won = successRate.won || 0;
+            const total = successRate.total || 1;
+            
+            let html = `
+                <h3>📖 Your Legal Situation Analysis</h3>
+                
+                <div class="ai-box">
+                    <h4>🤖 AI-Powered Explanation</h4>
+                    <p>${data.aiExplanation || 'Loading explanation...'}</p>
+                </div>
+                
+                <div class="success-rate">
+                    <p>Success Rate in Similar Cases</p>
+                    <h4>${percentage}%</h4>
+                    <p>${won} out of ${total} cases won</p>
+                </div>
+                
+                <h3>📚 Similar Cases Found (${(data.similarCases && data.similarCases.length) || 0})</h3>
+            `;
+            
+            if (data.similarCases && data.similarCases.length > 0) {
+                data.similarCases.forEach(caseItem => {
+                    const status = caseItem.outcome && caseItem.outcome.toLowerCase() === 'won' ? '✅ Won' : '❌ Lost';
+                    const statusClass = caseItem.outcome && caseItem.outcome.toLowerCase() === 'won' ? '' : 'lost';
+                    html += `
+                        <div class="result-item ${statusClass}">
+                            <strong>${caseItem.name}</strong> (${caseItem.year})<br>
+                            <small>Law: ${caseItem.law} | Result: ${status} | Key Factor: ${caseItem.factor}</small>
+                        </div>
+                    `;
+                });
+            } else {
+                html += `<p style="color: #666;">No similar cases found in database.</p>`;
+            }
+            
+            html += `
+                <h3>🎯 Recommended Next Steps</h3>
+                <ol>
+            `;
+            if (data.nextSteps && data.nextSteps.length > 0) {
+                data.nextSteps.forEach(step => {
+                    html += `<li>${step}</li>`;
+                });
+            } else {
+                html += `<li>Collect all relevant documents</li><li>Consult with a legal professional</li><li>File your case</li>`;
+            }
+            
+            html += `
+                </ol>
+                
+                <h3>⏱️ Expected Timeline</h3>
+                <p><strong>${data.timeline || '2-3 years'}</strong></p>
+                
+                <h3>📞 Legal Help & Resources</h3>
+                <p><strong>${data.helpline?.name || 'National Legal Services Authority'}</strong></p>
+                <p>Phone: <strong>${data.helpline?.phone || '1877-LEGAL-AID'}</strong></p>
+                <p>Website: <a href="${data.helpline?.website || '#'}" target="_blank">${data.helpline?.website || 'nalsa.gov.in'}</a></p>
+            `;
+            
+            document.getElementById('citizenResult').innerHTML = html;
+            document.getElementById('citizenResult').classList.add('show');
+            document.getElementById('citizenResult').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function handleJudgeQuery() {
+            const caseTitle = document.getElementById('judgeCase').value;
+            const issues = document.getElementById('judgeIssues').value;
+            const documents = document.getElementById('judgeDocuments').value;
+            
+            if (!caseTitle || !issues) {
+                alert('Please fill Case Title and Legal Issues');
+                return;
+            }
+            
+            showJudgeLoader();
+            
+            google.script.run
+                .withSuccessHandler(displayJudgeResult)
+                .withFailureHandler(showError)
+                .generateJudgeResponse(caseTitle, issues, documents);
+        }
+        
+        function displayJudgeResult(data) {
+            hideJudgeLoader();
+            
+            let html = `
+                <h3>📋 Case: ${data.title || 'Untitled'}</h3>
+                
+                <h3>Legal Issues</h3>
+                <p>${data.issues || 'No issues specified'}</p>
+                
+                <div class="ai-box">
+                    <h4>🤖 AI Case Analysis</h4>
+                    <p>${data.aiAnalysis || 'Analyzing case...'}</p>
+                </div>
+                
+                <h3>🔍 Related Precedents & Rulings (${(data.relatedPrecedents && data.relatedPrecedents.length) || 0})</h3>
+                <p><strong>${data.precedentAnalysis || 'Analyzing precedents...'}</strong></p>
+            `;
+            
+            if (data.relatedPrecedents && data.relatedPrecedents.length > 0) {
+                data.relatedPrecedents.forEach(precedent => {
+                    const status = precedent.outcome && precedent.outcome.toLowerCase() === 'won' ? '✅' : '❌';
+                    html += `
+                        <div class="result-item">
+                            <strong>${status} ${precedent.name}</strong> (${precedent.year})<br>
+                            <small>Law: ${precedent.law} | Outcome: ${precedent.outcome}</small>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += `
+                <h3>📋 Required/Missing Documents</h3>
+                <ul>
+            `;
+            if (data.missingDocuments && data.missingDocuments.length > 0) {
+                data.missingDocuments.forEach(doc => {
+                    html += `<li>${doc}</li>`;
+                });
+            } else {
+                html += `<li>All standard court documents</li>`;
+            }
+            
+            html += `
+                </ul>
+                
+                <h3>⏱️ Suggested Timeline to Resolution</h3>
+                <p><strong>${data.suggestedTimeline || '18 months'}</strong></p>
+                
+                <h3>➡️ Next Action Required</h3>
+                <p><strong>${data.nextAction || 'Schedule first hearing'}</strong></p>
+            `;
+            
+            document.getElementById('judgeResult').innerHTML = html;
+            document.getElementById('judgeResult').classList.add('show');
+            document.getElementById('judgeResult').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showCitizenLoader() {
+            document.getElementById('citizenLoader').style.display = 'block';
+            document.getElementById('citizenResult').classList.remove('show');
+        }
+        
+        function hideCitizenLoader() {
+            document.getElementById('citizenLoader').style.display = 'none';
+        }
+        
+        function showJudgeLoader() {
+            document.getElementById('judgeLoader').style.display = 'block';
+            document.getElementById('judgeResult').classList.remove('show');
+        }
+        
+        function hideJudgeLoader() {
+            document.getElementById('judgeLoader').style.display = 'none';
+        }
+        
+        function showError(error) {
+            console.error('Error:', error);
+            alert('Error processing request: ' + error);
+            hideCitizenLoader();
+            hideJudgeLoader();
+        }
+    </script>
+</body>
+
+</html>
